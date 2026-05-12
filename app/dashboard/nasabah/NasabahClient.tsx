@@ -339,7 +339,7 @@ export default function NasabahClient({ nasabah }: NasabahClientProps) {
         {/* Footer count */}
         <div className="bg-[#D4D0C8] border-t-2 border-gray-400 p-2 px-4 flex items-center justify-between">
           <span className="text-xs font-bold text-gray-600">
-            Total: {filteredNasabah.reduce((acc: number, n) => acc + n.setoran.length, 0)} data
+            Total: {filteredNasabah.reduce((acc: number, n: any) => acc + n.setoran.length, 0)} data
           </span>
           {selectedRow && (
             <span className="text-xs font-bold text-blue-700 italic">1 baris dipilih — Klik tombol Edit untuk mengubah</span>

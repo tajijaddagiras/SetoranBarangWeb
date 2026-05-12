@@ -40,10 +40,10 @@ export default async function DashboardPage() {
   })
 
   // Ringkasan Keuangan Keseluruhan
-  const financialTotals = allSetoran.reduce((acc: { totalInvestasi: number, totalPiutangAwal: number, totalDiterima: number }, s) => {
+  const financialTotals = allSetoran.reduce((acc: { totalInvestasi: number, totalPiutangAwal: number, totalDiterima: number }, s: any) => {
     acc.totalInvestasi += s.hargaModal
     acc.totalPiutangAwal += s.hargaJual
-    acc.totalDiterima += (s.dp + s.riwayat.reduce((sum: number, r) => sum + r.nominal, 0))
+    acc.totalDiterima += (s.dp + s.riwayat.reduce((sum: number, r: any) => sum + r.nominal, 0))
     return acc
   }, { totalInvestasi: 0, totalPiutangAwal: 0, totalDiterima: 0 })
 

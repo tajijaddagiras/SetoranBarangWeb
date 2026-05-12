@@ -12,7 +12,7 @@ export default function RiwayatClient({ setoranList }: RiwayatClientProps) {
 
   useEffect(() => {
     if (selectedSetoranId) {
-      const s = setoranList.find(item => item.id === selectedSetoranId)
+      const s = setoranList.find((item: any) => item.id === selectedSetoranId)
       if (s) {
         setSelectedSetoran({
           ...s,

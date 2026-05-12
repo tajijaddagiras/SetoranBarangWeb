@@ -27,7 +27,7 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
   // Handle Nasabah Selection
   useEffect(() => {
     if (selectedNasabahId) {
-      const nasabah = nasabahList.find(n => n.id === selectedNasabahId)
+      const nasabah = nasabahList.find((n: any) => n.id === selectedNasabahId)
       if (nasabah && nasabah.setoran.length > 0) {
         const s = nasabah.setoran[0] // Ambil setoran pertama yang aktif
         setSelectedSetoran({
