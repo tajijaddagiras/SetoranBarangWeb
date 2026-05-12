@@ -45,6 +45,7 @@ model Setoran {
   targetAngsuran  Int      @default(1)  // misal 10 kali
   tanggalKredit   DateTime @default(now())
   tanggalJatuhTempo DateTime?
+  hariJatuhTempo  Int?      // Hari jatuh tempo tiap bulan (1-31)
   tanggalAngsuranBulanan DateTime? // Tanggal jatuh tempo angsuran tiap bulan
   
   // Status Tracking (Keep for backward compatibility/logic)
