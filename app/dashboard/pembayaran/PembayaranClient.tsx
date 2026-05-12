@@ -187,7 +187,7 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
                 <select 
                   value={selectedNasabahId} 
                   onChange={(e) => setSelectedNasabahId(e.target.value)}
-                  className="px-2 py-1.5 bg-white border-2 border-blue-600 focus:outline-none font-bold text-sm"
+                  className="px-2 py-1.5 bg-white border-2 border-blue-600 focus:outline-none font-bold text-sm text-gray-900"
                 >
                   <option value="">-- Pilih Nasabah --</option>
                   {nasabahList.map(n => (
@@ -196,10 +196,10 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
                 </select>
 
                 <label className="text-left font-medium">Kode Nasabah</label>
-                <input type="text" readOnly value={selectedSetoran?.kodeNasabah || ""} className="px-2 py-1.5 bg-gray-100 border border-gray-400 focus:outline-none" />
+                <input type="text" readOnly value={selectedSetoran?.kodeNasabah || ""} className="px-2 py-1.5 bg-gray-100 border border-gray-400 focus:outline-none text-gray-900" />
                 
                 <label className="text-left font-medium">Alamat</label>
-                <input type="text" readOnly value={selectedSetoran?.nasabahAlamat || ""} className="px-2 py-1.5 bg-gray-100 border border-gray-400 focus:outline-none" />
+                <input type="text" readOnly value={selectedSetoran?.nasabahAlamat || ""} className="px-2 py-1.5 bg-gray-100 border border-gray-400 focus:outline-none text-gray-900" />
                 
                 <label className="text-left font-medium">Sisa Angsuran</label>
                 <div className={`px-2 py-1.5 border border-gray-400 font-bold text-base ${selectedSetoran ? 'bg-[#90EE90]' : 'bg-gray-100'}`}>
@@ -208,14 +208,14 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
               </div>
               <div className="h-px bg-gray-400 my-4"></div>
               <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-y-3">
-                <label className="text-left font-medium leading-tight">Jumlah Bayar Angsuran</label>
+                <label className="text-left font-medium leading-tight text-gray-900">Jumlah Bayar Angsuran</label>
                 <div className="flex items-center gap-4">
                   <input
                     type="text"
                     readOnly={!ubahNominal || !selectedSetoran}
                     value={formData.nominal}
                     onChange={(e) => setFormData({...formData, nominal: formatNumber(e.target.value)})}
-                    className={`flex-1 min-w-0 px-3 py-2 border-2 border-blue-600 font-bold text-xl ${ubahNominal && selectedSetoran ? 'bg-white' : 'bg-gray-100'}`}
+                    className={`flex-1 min-w-0 px-3 py-2 border-2 border-blue-600 font-bold text-xl text-gray-900 ${ubahNominal && selectedSetoran ? 'bg-white' : 'bg-gray-100'}`}
                   />
                   <div className="flex items-center gap-2">
                     <input 
@@ -234,7 +234,7 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
                   disabled={!selectedSetoran}
                   value={formData.metode} 
                   onChange={(e) => setFormData({...formData, metode: e.target.value})} 
-                  className="px-2 py-1.5 bg-white border border-gray-400 focus:outline-none font-bold disabled:bg-gray-100"
+                  className="px-2 py-1.5 bg-white border border-gray-400 focus:outline-none font-bold disabled:bg-gray-100 text-gray-900"
                 >
                   <option value="Cash">Cash</option>
                   <option value="Transfer">Transfer</option>
@@ -251,7 +251,7 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
                   disabled={!selectedSetoran}
                   value={formData.noTransaksi} 
                   onChange={(e) => setFormData({...formData, noTransaksi: e.target.value})}
-                  className="px-2 py-1.5 bg-white border-2 border-blue-600 focus:outline-none font-mono font-bold disabled:bg-gray-100" 
+                  className="px-2 py-1.5 bg-white border-2 border-blue-600 focus:outline-none font-mono font-bold disabled:bg-gray-100 text-gray-900" 
                 />
                 <label className="text-left font-medium">Tanggal</label>
                 <input 
@@ -259,7 +259,7 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
                   disabled={!selectedSetoran}
                   value={formData.tanggal} 
                   onChange={(e) => setFormData({...formData, tanggal: e.target.value})} 
-                  className="px-2 py-1.5 bg-white border border-gray-400 focus:outline-none font-bold disabled:bg-gray-100" 
+                  className="px-2 py-1.5 bg-white border border-gray-400 focus:outline-none font-bold disabled:bg-gray-100 text-gray-900" 
                 />
                 <label className="text-left font-medium">Periode</label>
                 <select 

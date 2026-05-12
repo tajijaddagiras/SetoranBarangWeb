@@ -138,9 +138,9 @@ export default function NasabahClient({ nasabah }: NasabahClientProps) {
     n.setoran.some((s: any) => s.namaBarang.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
-  const inputClass = "px-2 py-1.5 bg-white border border-gray-400 focus:outline-none focus:border-blue-500 w-full font-medium text-sm"
+  const inputClass = "px-2 py-1.5 bg-white border border-gray-400 focus:outline-none focus:border-blue-500 w-full font-medium text-sm text-gray-900"
   const readonlyClass = "px-2 py-1.5 bg-gray-100 border border-gray-300 w-full font-bold text-blue-800 text-sm"
-  const labelClass = "text-left font-medium text-sm"
+  const labelClass = "text-left font-medium text-sm text-gray-800"
 
   return (
     <div className="p-4 font-sans text-sm space-y-4">

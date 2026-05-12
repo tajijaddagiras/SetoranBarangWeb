@@ -144,7 +144,7 @@ export default function RiwayatClient({ setoranList }: RiwayatClientProps) {
                 <select 
                   value={selectedSetoranId} 
                   onChange={(e) => setSelectedSetoranId(e.target.value)}
-                  className="px-2 py-1.5 bg-white border-2 border-blue-600 focus:outline-none font-bold text-sm"
+                  className="px-2 py-1.5 bg-white border-2 border-blue-600 focus:outline-none font-bold text-sm text-gray-900"
                 >
                   <option value="">-- Pilih Nasabah / Barang --</option>
                   {setoranList.map(s => (
@@ -153,10 +153,10 @@ export default function RiwayatClient({ setoranList }: RiwayatClientProps) {
                 </select>
 
                 <label className="text-left font-medium">Nama Nasabah</label>
-                <input type="text" readOnly value={selectedSetoran?.nasabah.nama || ""} className="px-2 py-1.5 bg-gray-100 border border-gray-400 focus:outline-none font-bold" />
+                <input type="text" readOnly value={selectedSetoran?.nasabah.nama || ""} className="px-2 py-1.5 bg-gray-100 border border-gray-400 focus:outline-none font-bold text-gray-900" />
                 
                 <label className="text-left font-medium">Alamat</label>
-                <input type="text" readOnly value={selectedSetoran?.nasabah.alamat || ""} className="px-2 py-1.5 bg-gray-100 border border-gray-400 focus:outline-none" />
+                <input type="text" readOnly value={selectedSetoran?.nasabah.alamat || ""} className="px-2 py-1.5 bg-gray-100 border border-gray-400 focus:outline-none text-gray-900" />
                 
                 <label className="text-left font-medium">Status Kredit</label>
                 <div className={`px-2 py-1 font-bold text-sm uppercase inline-block border border-gray-400 ${selectedSetoran?.status === 'lunas' ? 'bg-green-100 text-green-700' : selectedSetoran ? 'bg-blue-100 text-blue-700' : 'bg-gray-100'}`}>
@@ -169,7 +169,7 @@ export default function RiwayatClient({ setoranList }: RiwayatClientProps) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-y-3">
                 <label className="text-left font-medium">Nama Barang</label>
-                <input type="text" readOnly value={selectedSetoran?.namaBarang || ""} className="px-2 py-1.5 bg-white border border-gray-400 focus:outline-none font-bold" />
+                <input type="text" readOnly value={selectedSetoran?.namaBarang || ""} className="px-2 py-1.5 bg-white border border-gray-400 focus:outline-none font-bold text-gray-900" />
                 
                 <label className="text-left font-medium">Progress Bayar</label>
                 <div className="flex items-center gap-3">

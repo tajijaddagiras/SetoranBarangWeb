@@ -89,7 +89,7 @@ export default function DashboardClient({ stats }: { stats: Stats }) {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {stats.recentTransactions.map((t, i) => (
-                  <tr key={i} className="hover:bg-gray-50 transition-colors">
+                  <tr key={i} className="hover:bg-gray-50 transition-colors text-gray-900">
                     <td className="px-3 py-2 border-r border-gray-200">
                       <div className="font-bold">{t.setoran.nasabah.nama}</div>
                       <div className="text-[10px] text-gray-500">{t.setoran.namaBarang}</div>
@@ -118,7 +118,7 @@ export default function DashboardClient({ stats }: { stats: Stats }) {
           <div className="bg-white p-2 min-h-[300px]">
             <div className="space-y-2">
               {stats.upcomingPayments.map((p, i) => (
-                <div key={i} className="border border-gray-300 p-2 bg-gray-50 hover:bg-yellow-50 transition-colors">
+                <div key={i} className="border border-gray-300 p-2 bg-gray-50 hover:bg-yellow-50 transition-colors text-gray-900">
                   <div className="flex justify-between items-start mb-1">
                     <div className="font-bold text-gray-800">{p.nasabah.nama}</div>
                     <div className="text-[10px] font-bold bg-red-100 text-red-700 px-1 border border-red-200">
