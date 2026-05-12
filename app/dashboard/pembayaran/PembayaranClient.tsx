@@ -39,12 +39,17 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
           sisaAngsuran: (s.jumlahSetoran - s.jumlahDisetor)
         })
 
+        // Ambil No Transaksi terbaru dari riwayat atau dari setoran awal
+        const lastNoTransaksi = s.riwayat && s.riwayat.length > 0 
+          ? s.riwayat[0].noTransaksi 
+          : (s.noTransaksi || "")
+
         // Reset Form Data for new selection
         setFormData(prev => ({
           ...prev,
           nominal: formatNumber(s.nominalPerSetor.toString()),
           periode: (s.jumlahDisetor + 1).toString(),
-          noTransaksi: s.noTransaksi || ""
+          noTransaksi: lastNoTransaksi
         }))
         setSelectedRiwayatId(null)
       }
@@ -318,7 +323,33 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
                   {selectedSetoran?.riwayat.map((r: any, idx: number) => (
                     <tr
                       key={r.id}
-                      onClick={() => setSelectedRiwayatId(r.id === selectedRiwayatId ? null : r.id)}
+                      onClick={() => {
+                        if (selectedRiwayatId === r.id) {
+                          // Unselect: Reset to default (next payment)
+                          setSelectedRiwayatId(null)
+                          const lastNoTransaksi = selectedSetoran.riwayat && selectedSetoran.riwayat.length > 0 
+                            ? selectedSetoran.riwayat[0].noTransaksi 
+                            : (selectedSetoran.noTransaksi || "")
+                          
+                          setFormData(prev => ({
+                            ...prev,
+                            nominal: formatNumber(selectedSetoran.nominalPerSetor.toString()),
+                            periode: (selectedSetoran.jumlahDisetor + 1).toString(),
+                            noTransaksi: lastNoTransaksi,
+                            tanggal: new Date().toISOString().split('T')[0]
+                          }))
+                        } else {
+                          // Select: Show this history data
+                          setSelectedRiwayatId(r.id)
+                          setFormData(prev => ({
+                            ...prev,
+                            nominal: formatNumber(r.nominal.toString()),
+                            periode: r.periode?.replace("Angsuran ke-", "") || "",
+                            noTransaksi: r.noTransaksi || "",
+                            tanggal: new Date(r.tanggal).toISOString().split('T')[0]
+                          }))
+                        }
+                      }}
                       className={`transition-colors ${selectedRiwayatId === r.id ? 'bg-blue-600 text-white font-bold' : 'hover:bg-blue-50'}`}
                     >
                       <td className={`px-4 py-2 border-r text-center ${selectedRiwayatId === r.id ? 'border-blue-400' : 'border-gray-200'}`}>{idx + 1}</td>
