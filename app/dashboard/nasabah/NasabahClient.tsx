@@ -34,12 +34,12 @@ export default function NasabahClient({ nasabah }: NasabahClientProps) {
     const jangkawaktu = parseInt(formData.jangkaWaktu.toString()) || 0
     const totalAngs = hJual - dpVal
     const profit = hJual - hModal
-    const perBulan = jangkawaktu > 0 ? totalAngs / jangkawaktu : 0
+    const perBulan = jangkawaktu > 0 ? Math.round(totalAngs / jangkawaktu) : 0
     setFormData(prev => ({
       ...prev,
-      totalAngsuran: formatNumber(totalAngs.toString()),
+      totalAngsuran: formatNumber(Math.round(totalAngs).toString()),
       nominalPerSetor: formatNumber(perBulan.toString()),
-      keuntungan: formatNumber(profit.toString())
+      keuntungan: formatNumber(Math.round(profit).toString())
     }))
   }, [formData.hargaModal, formData.hargaJual, formData.dp, formData.jangkaWaktu])
 
