@@ -64,7 +64,7 @@ export default async function DashboardPage() {
   const next7Days = new Date()
   next7Days.setDate(now.getDate() + 7)
   
-  const upcomingPayments = allSetoran.filter(s => {
+  const upcomingPayments = allSetoran.filter((s: any) => {
     if (s.status !== 'aktif' || !s.tanggalAngsuranBulanan) return false
     const tgl = new Date(s.tanggalAngsuranBulanan)
     // Cek hanya hari dan bulan (asumsi jatuh tempo tiap bulan di tanggal yang sama)
