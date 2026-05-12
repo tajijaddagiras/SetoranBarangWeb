@@ -23,10 +23,10 @@ export default async function DashboardPage() {
   // Statistik Utama
   const totalNasabah = await prisma.nasabah.count()
   const setoranAktif = await prisma.setoran.count({ where: { status: 'aktif' } })
-  
+
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  
+
   // Keuntungan Bulan Ini (dari setoran yang ditambahkan bulan ini)
   const keuntunganBulanIni = await prisma.setoran.aggregate({
     where: { tanggalKredit: { gte: startOfMonth } } as any,
@@ -63,7 +63,7 @@ export default async function DashboardPage() {
   // Nasabah yang akan jatuh tempo (dalam 7 hari)
   const next7Days = new Date()
   next7Days.setDate(now.getDate() + 7)
-  
+
   const upcomingPayments = allSetoran.filter((s: any) => {
     if (s.status !== 'aktif' || !s.tanggalAngsuranBulanan) return false
     const tgl = new Date(s.tanggalAngsuranBulanan)

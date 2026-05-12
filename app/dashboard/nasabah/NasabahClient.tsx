@@ -11,17 +11,19 @@ export default function NasabahClient({ nasabah }: NasabahClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-  const [currentIds, setCurrentIds] = useState<{nasabahId: string, setoranId: string} | null>(null)
+  const [currentIds, setCurrentIds] = useState<{ nasabahId: string, setoranId: string } | null>(null)
   const [selectedRow, setSelectedRow] = useState<string | null>(null)
-  
+
   const today = new Date().toISOString().split('T')[0]
-  
+
   const initialForm = {
     nama: "", alamat: "", telepon: "",
     namaBarang: "", noTransaksi: "", hargaModal: "", hargaJual: "", dp: "",
     jangkaWaktu: "", targetAngsuran: "", totalAngsuran: "",
     nominalPerSetor: "", keuntungan: "",
-    tanggalKredit: today, tanggalJatuhTempo: "", tanggalAngsuranBulanan: ""
+    tanggalKredit: today, 
+    tanggalJatuhTempo: "", 
+    hariJatuhTempo: ""
   }
 
   const [formData, setFormData] = useState(initialForm)
@@ -76,7 +78,7 @@ export default function NasabahClient({ nasabah }: NasabahClientProps) {
       keuntungan: formatNumber(s.keuntungan.toString()),
       tanggalKredit: new Date(s.tanggalKredit).toISOString().split('T')[0],
       tanggalJatuhTempo: s.tanggalJatuhTempo ? new Date(s.tanggalJatuhTempo).toISOString().split('T')[0] : "",
-      tanggalAngsuranBulanan: s.tanggalAngsuranBulanan ? new Date(s.tanggalAngsuranBulanan).toISOString().split('T')[0] : ""
+      hariJatuhTempo: s.hariJatuhTempo ? s.hariJatuhTempo.toString() : ""
     })
     // Scroll ke atas form
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -104,6 +106,8 @@ export default function NasabahClient({ nasabah }: NasabahClientProps) {
       keuntungan: parseFloat(formData.keuntungan.replace(/\./g, "")),
       jangkaWaktu: parseInt(formData.jangkaWaktu),
       targetAngsuran: parseInt(formData.targetAngsuran),
+      hariJatuhTempo: parseInt(formData.hariJatuhTempo) || null,
+      tanggalJatuhTempo: formData.tanggalJatuhTempo ? new Date(formData.tanggalJatuhTempo) : null,
       setoranId: currentIds?.setoranId
     }
     try {
@@ -160,15 +164,15 @@ export default function NasabahClient({ nasabah }: NasabahClientProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3 mb-6 mt-3">
               <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-2">
                 <label className={labelClass}>Nama *</label>
-                <input type="text" required value={formData.nama} onChange={(e) => setFormData({...formData, nama: e.target.value})} className={inputClass} />
+                <input type="text" required value={formData.nama} onChange={(e) => setFormData({ ...formData, nama: e.target.value })} className={inputClass} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-2">
                 <label className={labelClass}>Telepon *</label>
-                <input type="text" required value={formData.telepon} onChange={(e) => setFormData({...formData, telepon: e.target.value})} className={inputClass} />
+                <input type="text" required value={formData.telepon} onChange={(e) => setFormData({ ...formData, telepon: e.target.value })} className={inputClass} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-2">
                 <label className={labelClass}>Alamat</label>
-                <input type="text" value={formData.alamat} onChange={(e) => setFormData({...formData, alamat: e.target.value})} className={inputClass} />
+                <input type="text" value={formData.alamat} onChange={(e) => setFormData({ ...formData, alamat: e.target.value })} className={inputClass} />
               </div>
             </div>
 
@@ -179,41 +183,47 @@ export default function NasabahClient({ nasabah }: NasabahClientProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3 mt-3">
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>Nama Barang *</label>
-                <input type="text" required value={formData.namaBarang} onChange={(e) => setFormData({...formData, namaBarang: e.target.value})} className={inputClass} />
+                <input type="text" required value={formData.namaBarang} onChange={(e) => setFormData({ ...formData, namaBarang: e.target.value })} className={inputClass} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>No. Transaksi</label>
-                <input type="text" value={formData.noTransaksi} onChange={(e) => setFormData({...formData, noTransaksi: e.target.value})} className={inputClass} placeholder="Boleh kosong" />
+                <input type="text" value={formData.noTransaksi} onChange={(e) => setFormData({ ...formData, noTransaksi: e.target.value })} className={inputClass} placeholder="Boleh kosong" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>Tgl Kredit *</label>
-                <input type="date" required value={formData.tanggalKredit} onChange={(e) => setFormData({...formData, tanggalKredit: e.target.value})} className={inputClass} />
+                <input type="date" required value={formData.tanggalKredit} onChange={(e) => setFormData({ ...formData, tanggalKredit: e.target.value })} className={inputClass} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>Jatuh Tempo *</label>
-                <input type="date" required value={formData.tanggalJatuhTempo} onChange={(e) => setFormData({...formData, tanggalJatuhTempo: e.target.value})} className={inputClass} />
+                <input 
+                  type="date" 
+                  required 
+                  value={formData.tanggalJatuhTempo || ""} 
+                  onChange={(e) => setFormData({ ...formData, tanggalJatuhTempo: e.target.value })} 
+                  className={inputClass} 
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>Harga Modal</label>
-                <input type="text" value={formData.hargaModal} onChange={(e) => setFormData({...formData, hargaModal: formatNumber(e.target.value)})} className={`${inputClass} text-orange-600 font-bold`} />
+                <input type="text" value={formData.hargaModal} onChange={(e) => setFormData({ ...formData, hargaModal: formatNumber(e.target.value) })} className={`${inputClass} text-orange-600 font-bold`} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>Harga Jual *</label>
-                <input type="text" required value={formData.hargaJual} onChange={(e) => setFormData({...formData, hargaJual: formatNumber(e.target.value)})} className={`${inputClass} text-blue-600 font-bold`} />
+                <input type="text" required value={formData.hargaJual} onChange={(e) => setFormData({ ...formData, hargaJual: formatNumber(e.target.value) })} className={`${inputClass} text-blue-600 font-bold`} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>DP / Uang Muka</label>
-                <input type="text" value={formData.dp} onChange={(e) => setFormData({...formData, dp: formatNumber(e.target.value)})} className={`${inputClass} text-green-700 font-bold`} />
+                <input type="text" value={formData.dp} onChange={(e) => setFormData({ ...formData, dp: formatNumber(e.target.value) })} className={`${inputClass} text-green-700 font-bold`} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>Jangka Waktu</label>
-                <input type="number" value={formData.jangkaWaktu} onChange={(e) => setFormData({...formData, jangkaWaktu: e.target.value})} className={inputClass} placeholder="Bulan" />
+                <input type="number" value={formData.jangkaWaktu} onChange={(e) => setFormData({ ...formData, jangkaWaktu: e.target.value })} className={inputClass} placeholder="Bulan" />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>Target Angsuran *</label>
-                <input type="number" required value={formData.targetAngsuran} onChange={(e) => setFormData({...formData, targetAngsuran: e.target.value})} className={inputClass} placeholder="Kali" />
+                <input type="number" required value={formData.targetAngsuran} onChange={(e) => setFormData({ ...formData, targetAngsuran: e.target.value })} className={inputClass} placeholder="Kali" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>Total Angsuran</label>
@@ -225,7 +235,15 @@ export default function NasabahClient({ nasabah }: NasabahClientProps) {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] items-center gap-2">
                 <label className={labelClass}>Tgl Angs. Bulanan</label>
-                <input type="date" value={formData.tanggalAngsuranBulanan} onChange={(e) => setFormData({...formData, tanggalAngsuranBulanan: e.target.value})} className={inputClass} />
+                <input 
+                  type="number" 
+                  min="1" 
+                  max="31" 
+                  value={formData.hariJatuhTempo || ""} 
+                  onChange={(e) => setFormData({ ...formData, hariJatuhTempo: e.target.value })} 
+                  className={inputClass} 
+                  placeholder="Tanggal (1-31)"
+                />
               </div>
             </div>
 

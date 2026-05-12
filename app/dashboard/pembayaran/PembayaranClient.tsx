@@ -115,7 +115,7 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
     `)
     w.document.close()
     w.focus()
-    setTimeout(() => { w.print(); w.close() }, 400)
+    setTimeout(() => { w.print(); w.close() }, 1000)
   }
 
   const handlePrintStruk = () => {
@@ -129,9 +129,10 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
     const html = `
       <div style="max-width:380px;margin:0 auto;border:2px solid black;padding:32px;font-family:serif">
         <div style="text-align:center;border-bottom:2px solid black;padding-bottom:16px;margin-bottom:24px">
+          <img src="/logo.png" style="width:50px;height:50px;object-fit:contain;margin-bottom:8px" alt="Logo" />
           <h1 style="font-size:22px;font-weight:900;text-transform:uppercase;letter-spacing:4px;margin:0">OESADA UTAMA</h1>
           <p style="font-size:11px;font-weight:bold;margin:4px 0 0">STRUK BUKTI PEMBAYARAN ANGSURAN</p>
-          <p style="font-size:10px;font-style:italic;margin:2px 0 0">Stabat, Kab. Langkat</p>
+          <p style="font-size:10px;font-style:italic;margin:2px 0 0">Desa Batu Kumbung Kec. Lingsar Kab. Lombok Barat</p>
         </div>
         ${[
           ["No. Transaksi", r.noTransaksi],

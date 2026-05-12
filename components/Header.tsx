@@ -19,6 +19,7 @@ export default function Header({
     if (pathname === "/dashboard/riwayat") return "Riwayat Setoran"
     if (pathname.includes("/nasabah/tambah")) return "Tambah Nasabah Baru"
     if (pathname.includes("/setoran/")) return "Detail & Riwayat Setoran"
+    if (pathname === "/dashboard/profile") return "Pengaturan Profile"
     return "Management System"
   }
 

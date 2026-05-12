@@ -49,7 +49,7 @@ export default function RiwayatClient({ setoranList }: RiwayatClientProps) {
     `)
     w.document.close()
     w.focus()
-    setTimeout(() => { w.print(); w.close() }, 400)
+    setTimeout(() => { w.print(); w.close() }, 1000)
   }
 
   const handlePrintHistory = () => {
@@ -70,11 +70,11 @@ export default function RiwayatClient({ setoranList }: RiwayatClientProps) {
       <div style="font-family:serif;color:black">
         <div style="border-bottom:4px double black;padding-bottom:16px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start">
           <div style="display:flex;align-items:center;gap:16px">
-            <div style="width:60px;height:60px;background:#1e3a8a;color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:24px;border-radius:8px">OU</div>
+            <img src="/logo.png" style="width:60px;height:60px;object-fit:contain" alt="Logo" />
             <div>
               <h1 style="font-size:24px;font-weight:900;text-transform:uppercase;margin:0 0 2px">OESADA UTAMA</h1>
               <p style="font-size:12px;font-weight:bold;margin:0 0 2px">Laporan Histori Pembayaran Angsuran</p>
-              <p style="font-size:11px;margin:0">Lingk. IV Lubuk Dalam, Stabat, Kab. Langkat</p>
+              <p style="font-size:11px;margin:0">Desa Batu Kumbung Kec. Lingsar Kab. Lombok Barat</p>
             </div>
           </div>
           <div style="text-align:right;font-size:12px"><p style="margin:0">Tgl Cetak: ${new Date().toLocaleDateString('id-ID')}</p></div>

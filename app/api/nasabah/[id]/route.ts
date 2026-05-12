@@ -39,11 +39,11 @@ export async function PUT(
 
   try {
     const body = await request.json()
-    const { 
-      nama, alamat, telepon, 
-      namaBarang, noTransaksi, hargaModal, hargaJual, dp, 
+    const {
+      nama, alamat, telepon,
+      namaBarang, noTransaksi, hargaModal, hargaJual, dp,
       jangkaWaktu, targetAngsuran, totalAngsuran, nominalPerSetor, keuntungan,
-      tanggalKredit, tanggalJatuhTempo, tanggalAngsuranBulanan,
+      tanggalKredit, tanggalJatuhTempo, hariJatuhTempo,
       setoranId // We need the setoran ID to update it
     } = body
 
@@ -70,7 +70,7 @@ export async function PUT(
               keuntungan,
               tanggalKredit: new Date(tanggalKredit),
               tanggalJatuhTempo: tanggalJatuhTempo ? new Date(tanggalJatuhTempo) : null,
-              tanggalAngsuranBulanan: tanggalAngsuranBulanan ? new Date(tanggalAngsuranBulanan) : null,
+              hariJatuhTempo: hariJatuhTempo || null,
             } as any
           }
         }
