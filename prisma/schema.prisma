@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Nasabah {
+  id        String     @id @default(cuid())
+  nama      String
+  alamat    String?
+  telepon   String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  setoran   Setoran[]
+}
+
+model Setoran {
+  id              String   @id @default(cuid())
+  nasabahId       String
+  nasabah         Nasabah  @relation(fields: [nasabahId], references: [id], onDelete: Cascade)
+  namaBarang      String
+  noTransaksi     String?
+  
+  // Informasi Keuangan
+  hargaModal      Float    @default(0)
+  hargaJual       Float    @default(0)
+  dp              Float    @default(0)
+  totalAngsuran   Float    @default(0) // Total yang harus diangsur (Harga Jual - DP)
+  nominalPerSetor Float    @default(0) // Nominal angsuran per bulan
+  keuntungan      Float    @default(0) // Keuntungan total
+  
+  // Informasi Waktu
+  jangkaWaktu     Int      @default(1)  // misal 10 bulan
+  targetAngsuran  Int      @default(1)  // misal 10 kali
+  tanggalKredit   DateTime @default(now())
+  tanggalJatuhTempo DateTime?
+  tanggalAngsuranBulanan DateTime? // Tanggal jatuh tempo angsuran tiap bulan
+  
+  // Status Tracking (Keep for backward compatibility/logic)
+  jumlahSetoran   Int      @default(1)
+  jumlahDisetor   Int      @default(0)
+  status          String   @default("aktif") // aktif, lunas
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  riwayat         RiwayatSetoran[]
+}
+
+model RiwayatSetoran {
+  id          String   @id @default(cuid())
+  setoranId   String
+  setoran     Setoran  @relation(fields: [setoranId], references: [id], onDelete: Cascade)
+  nominal     Float
+  metode      String   @default("Tunai") // Tunai, Transfer, dll
+  noTransaksi String?
+  periode     String?  // misal: Angsuran ke-5
+  tanggal     DateTime @default(now())
+  keterangan  String?
+  createdAt   DateTime @default(now())
+}

@@ -1,0 +1,92 @@
+"use client"
+
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import Image from "next/image"
+
+export default function Sidebar({ onClose }: { onClose?: () => void }) {
+  const pathname = usePathname()
+
+  const menuItems = [
+    { name: "Dashboard", href: "/dashboard", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    )},
+    { name: "Data Nasabah", href: "/dashboard/nasabah", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    )},
+    { name: "Pembayaran", href: "/dashboard/pembayaran", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+    )},
+    { name: "Riwayat Setoran", href: "/dashboard/riwayat", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+      </svg>
+    )},
+  ]
+
+  return (
+    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0 print:hidden shadow-xl lg:shadow-none">
+      <div className="p-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 relative bg-blue-50 rounded-lg flex items-center justify-center overflow-hidden">
+            <Image 
+              src="/logo.png" 
+              alt="Logo" 
+              fill 
+              sizes="40px"
+              className="object-contain p-1"
+              onError={(e) => {
+                // Fallback if image not found
+                const target = e.target as HTMLImageElement;
+                target.src = "https://placehold.co/40x40?text=Logo";
+              }}
+            />
+          </div>
+          <span className="font-bold text-lg text-gray-800 tracking-tight">OESADA UTAMA</span>
+        </div>
+        
+        <button 
+          onClick={onClose}
+          className="p-2 lg:hidden text-gray-500 hover:bg-gray-100 rounded-lg"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <nav className="flex-1 px-4 py-4 space-y-1">
+        {menuItems.map((item) => {
+          const isActive = pathname === item.href
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                isActive 
+                  ? "bg-blue-600 text-white shadow-lg shadow-blue-200" 
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {item.icon}
+              <span className="font-medium">{item.name}</span>
+            </Link>
+          )
+        })}
+      </nav>
+
+      <div className="p-4 border-t border-gray-100">
+        <div className="bg-gray-50 rounded-2xl p-4">
+          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Sistem Manajemen</p>
+          <p className="text-sm font-semibold text-gray-700">Versi 1.0.0</p>
+        </div>
+      </div>
+    </aside>
+  )
+}
