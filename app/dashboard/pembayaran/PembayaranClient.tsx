@@ -14,6 +14,7 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
   const [loading, setLoading] = useState(false)
   const [ubahNominal, setUbahNominal] = useState(false)
   const [selectedRiwayatId, setSelectedRiwayatId] = useState<string | null>(null)
+  const [isEditMode, setIsEditMode] = useState(false)
 
   const [formData, setFormData] = useState({
     nominal: "",
@@ -74,24 +75,79 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
     
     setLoading(true)
     try {
-      const response = await fetch(`/api/setoran/${selectedSetoran.id}/bayar`, {
-        method: "POST",
+      const url = isEditMode 
+        ? `/api/riwayat/${selectedRiwayatId}` 
+        : `/api/setoran/${selectedSetoran.id}/bayar`
+      const method = isEditMode ? "PATCH" : "POST"
+
+      const response = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
           nominal: parseFloat(formData.nominal.replace(/\./g, "")),
-          periode: `Angsuran ke-${formData.periode}`
+          periode: isEditMode ? formData.periode : `Angsuran ke-${formData.periode}`
         })
       })
       if (response.ok) {
         window.location.reload()
       } else {
-        alert("Gagal memproses pembayaran")
+        alert(isEditMode ? "Gagal memperbarui pembayaran" : "Gagal memproses pembayaran")
       }
     } catch {
       alert("Terjadi kesalahan")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeleteRiwayat = async (id: string) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus histori pembayaran ini? Jumlah setoran nasabah akan berkurang.")) return
+    try {
+      const response = await fetch(`/api/riwayat/${id}`, { method: "DELETE" })
+      if (response.ok) {
+        window.location.reload()
+      } else {
+        alert("Gagal menghapus histori")
+      }
+    } catch {
+      alert("Terjadi kesalahan")
+    }
+  }
+
+  const handleEditRiwayat = (r: any) => {
+    setIsEditMode(true)
+    setSelectedRiwayatId(r.id)
+    setUbahNominal(true)
+    setFormData({
+      nominal: formatNumber(r.nominal.toString()),
+      periode: r.periode?.replace("Angsuran ke-", "") || "",
+      noTransaksi: r.noTransaksi || "",
+      tanggal: new Date(r.tanggal).toISOString().split('T')[0],
+      metode: r.metode || "Cash",
+      keterangan: r.keterangan || ""
+    })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleBatalEdit = () => {
+    setIsEditMode(false)
+    setSelectedRiwayatId(null)
+    setUbahNominal(false)
+    // Reset to default next payment if a nasabah is selected
+    if (selectedSetoran) {
+      const lastNoTransaksi = selectedSetoran.riwayat && selectedSetoran.riwayat.length > 0 
+        ? selectedSetoran.riwayat[0].noTransaksi 
+        : (selectedSetoran.noTransaksi || "")
+      
+      setFormData({
+        nominal: formatNumber(selectedSetoran.nominalPerSetor.toString()),
+        periode: (selectedSetoran.jumlahDisetor + 1).toString(),
+        noTransaksi: lastNoTransaksi,
+        tanggal: new Date().toISOString().split('T')[0],
+        metode: "Cash",
+        keterangan: ""
+      })
     }
   }
 
@@ -292,8 +348,16 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
               onClick={handleSubmit} 
               className="flex-1 sm:flex-none px-8 py-2 bg-[#D4D0C8] border-2 border-white border-b-gray-600 border-r-gray-600 active:shadow-inner flex justify-center items-center gap-2 font-bold hover:bg-gray-200 disabled:opacity-50"
             >
-              <span className="text-blue-600 text-lg">▼</span> <u>B</u>ayar
+              <span className="text-blue-600 text-lg">▼</span> {isEditMode ? "Simpan Perubahan" : <span><u>B</u>ayar</span>}
             </button>
+            {isEditMode && (
+              <button 
+                onClick={handleBatalEdit} 
+                className="flex-1 sm:flex-none px-6 py-2 bg-[#D4D0C8] border-2 border-white border-b-gray-600 border-r-gray-600 active:shadow-inner font-bold hover:bg-gray-200 text-red-700"
+              >
+                Batal Edit
+              </button>
+            )}
             <button
               onClick={handlePrintStruk}
               disabled={!selectedRiwayatId}
@@ -317,7 +381,8 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
                     <th className="px-4 py-2 border-r border-gray-300 text-left">No Transaksi</th>
                     <th className="px-4 py-2 border-r border-gray-300 text-left">Tgl Transaksi</th>
                     <th className="px-4 py-2 border-r border-gray-300 text-left">Uraian</th>
-                    <th className="px-4 py-2 text-right">Nominal Bayar</th>
+                    <th className="px-4 py-2 border-r border-gray-300 text-right">Nominal Bayar</th>
+                    <th className="px-4 py-2 text-center">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 cursor-pointer">
@@ -325,30 +390,10 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
                     <tr
                       key={r.id}
                       onClick={() => {
-                        if (selectedRiwayatId === r.id) {
-                          // Unselect: Reset to default (next payment)
+                        if (selectedRiwayatId === r.id && !isEditMode) {
                           setSelectedRiwayatId(null)
-                          const lastNoTransaksi = selectedSetoran.riwayat && selectedSetoran.riwayat.length > 0 
-                            ? selectedSetoran.riwayat[0].noTransaksi 
-                            : (selectedSetoran.noTransaksi || "")
-                          
-                          setFormData(prev => ({
-                            ...prev,
-                            nominal: formatNumber(selectedSetoran.nominalPerSetor.toString()),
-                            periode: (selectedSetoran.jumlahDisetor + 1).toString(),
-                            noTransaksi: lastNoTransaksi,
-                            tanggal: new Date().toISOString().split('T')[0]
-                          }))
-                        } else {
-                          // Select: Show this history data
+                        } else if (!isEditMode) {
                           setSelectedRiwayatId(r.id)
-                          setFormData(prev => ({
-                            ...prev,
-                            nominal: formatNumber(r.nominal.toString()),
-                            periode: r.periode?.replace("Angsuran ke-", "") || "",
-                            noTransaksi: r.noTransaksi || "",
-                            tanggal: new Date(r.tanggal).toISOString().split('T')[0]
-                          }))
                         }
                       }}
                       className={`transition-colors ${selectedRiwayatId === r.id ? 'bg-blue-600 text-white font-bold' : 'hover:bg-blue-50'}`}
@@ -357,11 +402,23 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
                       <td className={`px-4 py-2 border-r font-mono ${selectedRiwayatId === r.id ? 'border-blue-400' : 'border-gray-200'}`}>{r.noTransaksi || '-'}</td>
                       <td className={`px-4 py-2 border-r ${selectedRiwayatId === r.id ? 'border-blue-400' : 'border-gray-200'}`}>{new Date(r.tanggal).toLocaleDateString('id-ID')}</td>
                       <td className={`px-4 py-2 border-r ${selectedRiwayatId === r.id ? 'border-blue-400' : 'border-gray-200'}`}>Pembayaran {r.periode || '-'}</td>
-                      <td className={`px-4 py-2 text-right font-bold ${selectedRiwayatId === r.id ? 'text-white' : 'text-green-700'}`}>{formatRupiah(r.nominal)}</td>
+                      <td className={`px-4 py-2 border-r text-right font-bold ${selectedRiwayatId === r.id ? 'text-white' : 'text-green-700'}`}>{formatRupiah(r.nominal)}</td>
+                      <td className={`px-4 py-2 text-center ${selectedRiwayatId === r.id ? 'border-blue-400' : 'border-gray-200'}`}>
+                        <div className="flex gap-1 justify-center">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleEditRiwayat(r) }}
+                            className={`px-2 py-0.5 bg-[#D4D0C8] border border-white border-b-gray-600 border-r-gray-600 active:shadow-inner text-[10px] font-bold hover:bg-gray-200 ${selectedRiwayatId === r.id ? 'text-white' : 'text-amber-700'}`}
+                          >Edit</button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteRiwayat(r.id) }}
+                            className={`px-2 py-0.5 bg-[#D4D0C8] border border-white border-b-gray-600 border-r-gray-600 active:shadow-inner text-[10px] font-bold hover:bg-gray-200 ${selectedRiwayatId === r.id ? 'text-white' : 'text-red-700'}`}
+                          >Hapus</button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                   {(!selectedSetoran || selectedSetoran.riwayat.length === 0) && (
-                    <tr><td colSpan={5} className="px-4 py-16 text-center text-gray-400 italic">{selectedSetoran ? "Belum ada histori transaksi." : "Silakan pilih nasabah."}</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-16 text-center text-gray-400 italic">{selectedSetoran ? "Belum ada histori transaksi." : "Silakan pilih nasabah."}</td></tr>
                   )}
                 </tbody>
               </table>
