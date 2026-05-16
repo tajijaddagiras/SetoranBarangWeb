@@ -152,26 +152,56 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
   }
 
   const openPrintWindow = (html: string) => {
-    const w = window.open('', '_blank', 'width=800,height=900')
-    if (!w) return
-    w.document.write(`
+    // Buat iframe tersembunyi
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (!doc) return;
+
+    doc.write(`
       <!DOCTYPE html>
       <html>
       <head>
         <title>Print</title>
         <meta charset="utf-8"/>
         <style>
-          @page { margin: 1.2cm; size: A4 portrait; }
+          @page { margin: 1cm; size: auto; }
           * { box-sizing: border-box; }
           body { font-family: serif; color: black; background: white; margin: 0; padding: 0; }
+          img { max-width: 100%; height: auto; }
         </style>
       </head>
-      <body>${html}</body>
+      <body>
+        ${html}
+        <script>
+          window.onload = () => {
+            window.print();
+          };
+        </script>
+      </body>
       </html>
-    `)
-    w.document.close()
-    w.focus()
-    setTimeout(() => { w.print(); w.close() }, 1000)
+    `);
+    doc.close();
+
+    // Hapus iframe setelah proses cetak selesai (atau dibatalkan)
+    // Kita beri sedikit jeda agar proses print di browser mobile sempat terpicu
+    iframe.contentWindow?.addEventListener('afterprint', () => {
+      document.body.removeChild(iframe);
+    });
+
+    // Fallback untuk browser yang tidak mendukung event afterprint
+    setTimeout(() => {
+      if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+      }
+    }, 60000); // 1 menit fallback
   }
 
   const handlePrintStruk = () => {
