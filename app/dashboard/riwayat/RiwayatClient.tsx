@@ -30,7 +30,7 @@ export default function RiwayatClient({ setoranList }: RiwayatClientProps) {
   }
 
   const openPrintWindow = (html: string) => {
-    // Buat iframe tersembunyi
+    // 1. Buat iframe tersembunyi
     const iframe = document.createElement('iframe');
     iframe.style.position = 'fixed';
     iframe.style.right = '0';
@@ -43,6 +43,7 @@ export default function RiwayatClient({ setoranList }: RiwayatClientProps) {
     const doc = iframe.contentWindow?.document;
     if (!doc) return;
 
+    // 2. Tulis konten ke dalam iframe
     doc.write(`
       <!DOCTYPE html>
       <html>
@@ -54,23 +55,34 @@ export default function RiwayatClient({ setoranList }: RiwayatClientProps) {
           * { box-sizing: border-box; }
           body { font-family: serif; color: black; background: white; margin: 0; padding: 0; }
           img { max-width: 100%; height: auto; }
+          @media print {
+            body { margin: 0; padding: 0; }
+          }
         </style>
       </head>
       <body>
         ${html}
-        <script>
-          window.onload = () => {
-            window.print();
-          };
-        </script>
       </body>
       </html>
     `);
     doc.close();
 
-    // Hapus iframe setelah proses cetak selesai (atau dibatalkan)
+    // 3. Tunggu konten dimuat sepenuhnya
+    iframe.onload = () => {
+      // 4. Fokus dan cetak
+      setTimeout(() => {
+        if (iframe.contentWindow) {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+        }
+      }, 500);
+    };
+
+    // 5. Bersihkan iframe
     iframe.contentWindow?.addEventListener('afterprint', () => {
-      document.body.removeChild(iframe);
+      if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+      }
     });
 
     // Fallback

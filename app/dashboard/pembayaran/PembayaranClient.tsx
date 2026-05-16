@@ -152,7 +152,7 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
   }
 
   const openPrintWindow = (html: string) => {
-    // Buat iframe tersembunyi
+    // 1. Buat iframe tersembunyi
     const iframe = document.createElement('iframe');
     iframe.style.position = 'fixed';
     iframe.style.right = '0';
@@ -165,6 +165,7 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
     const doc = iframe.contentWindow?.document;
     if (!doc) return;
 
+    // 2. Tulis konten ke dalam iframe
     doc.write(`
       <!DOCTYPE html>
       <html>
@@ -176,32 +177,42 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
           * { box-sizing: border-box; }
           body { font-family: serif; color: black; background: white; margin: 0; padding: 0; }
           img { max-width: 100%; height: auto; }
+          @media print {
+            body { margin: 0; padding: 0; }
+          }
         </style>
       </head>
       <body>
         ${html}
-        <script>
-          window.onload = () => {
-            window.print();
-          };
-        </script>
       </body>
       </html>
     `);
     doc.close();
 
-    // Hapus iframe setelah proses cetak selesai (atau dibatalkan)
-    // Kita beri sedikit jeda agar proses print di browser mobile sempat terpicu
+    // 3. Tunggu konten (termasuk gambar) dimuat sepenuhnya
+    iframe.onload = () => {
+      // 4. Beri sedikit jeda ekstra agar rendering selesai, lalu fokus dan cetak
+      setTimeout(() => {
+        if (iframe.contentWindow) {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+        }
+      }, 500);
+    };
+
+    // 5. Hapus iframe setelah proses selesai atau dibatalkan
     iframe.contentWindow?.addEventListener('afterprint', () => {
-      document.body.removeChild(iframe);
+      if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+      }
     });
 
-    // Fallback untuk browser yang tidak mendukung event afterprint
+    // Fallback: Jika event afterprint tidak didukung, hapus setelah 1 menit
     setTimeout(() => {
       if (document.body.contains(iframe)) {
         document.body.removeChild(iframe);
       }
-    }, 60000); // 1 menit fallback
+    }, 60000);
   }
 
   const handlePrintStruk = () => {
