@@ -152,67 +152,22 @@ export default function PembayaranClient({ nasabahList }: PembayaranClientProps)
   }
 
   const openPrintWindow = (html: string) => {
-    // 1. Buat iframe tersembunyi
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
-    document.body.appendChild(iframe);
+    const printArea = document.getElementById('print-area');
+    if (!printArea) return;
 
-    const doc = iframe.contentWindow?.document;
-    if (!doc) return;
+    // 1. Masukkan konten ke area print
+    printArea.innerHTML = html;
 
-    // 2. Tulis konten ke dalam iframe
-    doc.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Print</title>
-        <meta charset="utf-8"/>
-        <style>
-          @page { margin: 1cm; size: auto; }
-          * { box-sizing: border-box; }
-          body { font-family: serif; color: black; background: white; margin: 0; padding: 0; }
-          img { max-width: 100%; height: auto; }
-          @media print {
-            body { margin: 0; padding: 0; }
-          }
-        </style>
-      </head>
-      <body>
-        ${html}
-      </body>
-      </html>
-    `);
-    doc.close();
-
-    // 3. Tunggu konten (termasuk gambar) dimuat sepenuhnya
-    iframe.onload = () => {
-      // 4. Beri sedikit jeda ekstra agar rendering selesai, lalu fokus dan cetak
-      setTimeout(() => {
-        if (iframe.contentWindow) {
-          iframe.contentWindow.focus();
-          iframe.contentWindow.print();
-        }
-      }, 500);
-    };
-
-    // 5. Hapus iframe setelah proses selesai atau dibatalkan
-    iframe.contentWindow?.addEventListener('afterprint', () => {
-      if (document.body.contains(iframe)) {
-        document.body.removeChild(iframe);
-      }
-    });
-
-    // Fallback: Jika event afterprint tidak didukung, hapus setelah 1 menit
+    // 2. Beri jeda singkat agar gambar (logo) ter-render sempurna
     setTimeout(() => {
-      if (document.body.contains(iframe)) {
-        document.body.removeChild(iframe);
-      }
-    }, 60000);
+      window.print();
+      
+      // 3. Bersihkan kembali setelah dialog cetak ditutup
+      // (Beri jeda agar proses print di sistem tidak terganggu)
+      setTimeout(() => {
+        printArea.innerHTML = '';
+      }, 1000);
+    }, 500);
   }
 
   const handlePrintStruk = () => {

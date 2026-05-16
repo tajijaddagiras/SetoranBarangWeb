@@ -19,6 +19,7 @@ export default function RootLayout({
     <html lang="id">
       <body className="antialiased">
         <Providers>{children}</Providers>
+        <div id="print-area"></div>
       </body>
     </html>
   );
