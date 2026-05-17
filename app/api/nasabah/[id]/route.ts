@@ -65,6 +65,7 @@ export async function PUT(
               dp,
               jangkaWaktu,
               targetAngsuran,
+              jumlahSetoran: targetAngsuran, // Link to existing logic
               totalAngsuran,
               nominalPerSetor,
               keuntungan,
